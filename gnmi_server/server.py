@@ -35,20 +35,23 @@ class gnmi_server(gnmi_pb2_grpc.gNMIServicer):
                 if req.subscribe.mode==0 and sub_check!=True:
                     sub_check = True
                 if req.subscribe.mode==1 and once_check!=True:
-                    once_check = True 
+                    once_check = True
 
-            for req in request_list:
-                if req.subscribe.mode==gnmi_pb2.SubscriptionList.STREAM:
-                    sub_resp = create_subscribe_response.create_response()
-                    for i in sub_resp:
-                            yield i
-                            time.sleep(1)
-                else:
-                    sync_resp = create_subscribe_response.create_sync_response()
-                    for i in sync_resp:
-                        yield i
-                    for j in sync_resp:
-                        yield j
+            if sub_check:
+                sub_resp = create_subscribe_response.create_response()
+                for i in sub_resp:
+                    yield i
+                    time.sleep(1)
+
+            if once_check:
+                sub_resp = create_subscribe_response.create_response()
+                sync_resp = create_subscribe_response.create_sync_response()
+                for i in sub_resp:
+                    yield i
+                for j in sync_resp:
+                    yield j
+                once_check=False
+
                 
 def serve():    
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
