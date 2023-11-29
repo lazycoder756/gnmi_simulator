@@ -7,7 +7,7 @@ from protos import gnmi_pb2
 square_pattern = r'\[.*?\]'
 
 def create_response():
-    subscribe_paths = parse_subscribe_input_file.read_txt_file("paths.txt")
+    subscribe_paths = parse_subscribe_input_file.read_txt_file("/app/paths/")
     for subscribe_path in subscribe_paths:
         nodes = subscribe_path.split("/")
         path_elems = []
