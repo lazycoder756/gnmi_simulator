@@ -1,0 +1,2 @@
+/a/b[name=test]/c
+/w/d/f[name=skhd]/s
