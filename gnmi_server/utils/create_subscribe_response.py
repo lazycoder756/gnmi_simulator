@@ -1,3 +1,4 @@
+from datetime import datetime
 from utils import parse_subscribe_input_file
 import re
 import json
@@ -7,7 +8,7 @@ from protos import gnmi_pb2
 square_pattern = r'\[.*?\]'
 
 def create_response():
-    subscribe_paths = parse_subscribe_input_file.read_txt_file("/app/paths/")
+    subscribe_paths = parse_subscribe_input_file.read_txt_file("/app/paths/paths.txt")
     for subscribe_path in subscribe_paths:
         nodes = subscribe_path.split("/")
         path_elems = []
@@ -35,7 +36,9 @@ def create_response():
             path=gnmi_pb2.Path(elem = path_elems),
             val =val
         )
-        notification = gnmi_pb2.Notification(timestamp=int(time.time()),update=[update_message])
+        current_datetime = datetime.now()
+        epoch_in_millisec = int(current_datetime.timestamp()*1000)
+        notification = gnmi_pb2.Notification(timestamp=epoch_in_millisec,update=[update_message])
         sub_response = gnmi_pb2.SubscribeResponse()
         sub_response.update.CopyFrom(notification)
         yield sub_response
