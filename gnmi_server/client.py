@@ -110,17 +110,32 @@ def call_subscribe_once(stub,metadata):
         if not i.sync_response:
             print("Upload scenario",i)
 
+def create_get_request():
+    path = gnmi_pb2.Path(
+        elem = [gnmi_pb2.PathElem(name="system",key={"sad":"sd","sds":"sdsd"}),gnmi_pb2.PathElem(name="clock"),gnmi_pb2.PathElem(name="time")]
+    )
+    encoding = gnmi_pb2.Encoding.JSON_IETF
+
+    get_req = gnmi_pb2.GetRequest(
+        path=[path],
+        encoding=encoding
+    )
+    return get_req
+
+
+
 def main():
     metadata = [('username', 'admin'), ('password', 'Vema@123')]
     stub = create_gnmi_client()
+    get_resp = stub.Get(create_get_request(),metadata=metadata)
+    print(get_resp)
+    #t1 = Thread(target=call_subscribe,args=(stub,metadata))
+    #t2 = Thread(target=call_subscribe_once,args=(stub,metadata))
+    #t1.start()
+    #t2.start()
 
-    t1 = Thread(target=call_subscribe,args=(stub,metadata))
-    t2 = Thread(target=call_subscribe_once,args=(stub,metadata))
-    t1.start()
-    t2.start()
-
-    t1.join()
-    t2.join()
+    #t1.join()
+    #t2.join()
 
 if __name__ == "__main__":
     main()
