@@ -45,10 +45,10 @@ def create_response():
 
 def create_get_response_val():
     path_rep_dict={}
-    get_paths = parse_subscribe_input_file.read_txt_file("/app/paths/get_paths.txt")
+    get_paths = parse_subscribe_input_file.read_txt_file("paths.txt")
     for i in get_paths:
         key_val = i.rsplit('=', 1)
-        path_rep_dict[key_val[0]]=key_val[1]
+        path_rep_dict[key_val[0]]=eval(key_val[1])
     return path_rep_dict
 
 
