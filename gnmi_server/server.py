@@ -4,6 +4,8 @@ from concurrent import futures
 import time
 from utils import create_subscribe_response
 from protos import gnmi_pb2,gnmi_pb2_grpc
+import json
+from datetime import datetime
 
 
 class gnmi_server(gnmi_pb2_grpc.gNMIServicer):
@@ -23,8 +25,39 @@ class gnmi_server(gnmi_pb2_grpc.gNMIServicer):
                 context.set_code(grpc.StatusCode.UNKNOWN)
                 context.set_details(f"Exception calling application: {str(e)}")
                 return gnmi_pb2.CapabilityResponse()
-        
-    
+            
+    def Get(self, request, context):
+        resp_dict=create_subscribe_response.create_get_response_val()
+        if is_cred_valid(context):
+            path_string=""
+            for i in request.path:
+                for j in i.elem:
+                    path_string=path_string+"/"+j.name
+                    if j.key:
+                        for key,value in j.key.items():
+                            path_string=path_string+"["+key+"="+value+"]"
+            val=None
+            if resp_dict.get(path_string) is not None:
+                _value_dict={}
+                _value_dict[path_string.rsplit('/', 1)[1]] = resp_dict[path_string]
+                final_value = json.dumps(_value_dict)
+                val = gnmi_pb2.TypedValue(json_ietf_val=final_value.encode('utf-8'))
+            request.path[0].elem.pop()
+            request = request.path[0]
+            update_msg = gnmi_pb2.Update(
+                path=request,
+                val=val
+            )
+            current_datetime = datetime.now()
+            epoch_in_millisec = int(current_datetime.timestamp()*1000)
+            notification = gnmi_pb2.Notification(
+                timestamp = epoch_in_millisec,
+                update = [update_msg]
+            )
+            return gnmi_pb2.GetResponse(
+                notification=[notification]
+            )
+
     def Subscribe(self, request_iterator, context):
         if is_cred_valid(context):        
             request_list = list(request_iterator)
