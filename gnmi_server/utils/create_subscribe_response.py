@@ -28,7 +28,7 @@ def create_response():
                 path_elem.name = node
                 path_elems.append(path_elem)
         _value = nodes[-1].split("=")
-        _value_dict = {_value[0]:_value[1]}
+        _value_dict = {_value[0]:eval(_value[1])}
         final_value = json.dumps(_value_dict)
         val = gnmi_pb2.TypedValue(json_ietf_val=final_value.encode('utf-8'))
  
