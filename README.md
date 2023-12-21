@@ -16,18 +16,23 @@ docker pull nareshkumar237n/gnmi_simulator
    ```
    **Note** : It can be any directory
    
-4) Create **paths.txt** file under **/tmp/yang_paths** and add path for which you want to send subscribe response to client
+3) Create **paths.txt** file under **/tmp/yang_paths** and add path for which you want to send subscribe response to client
    ### Example
    ```
    If you want to subscribe to paths /a/b[name=*]/c which provides string as response,
    than add below text in paths.txt file
    
    /a/b/[name=test]/c="output"
+
+   In case if response is integer than add text as mentioned below
+
+   /a/b/[name=test]/c=10
    
-   Note: test and output are sample text, it can be changed as per your need.
+   Note: test,output,10 are sample text, it can be changed as per your need.
    ```
-6) Create **get_paths.txt** file under **/tmp/yang_paths** and add paths for which you want to send get response to client
-7) Run the container
+4) Create **get_paths.txt** file under **/tmp/yang_paths** and add paths for which you want to send get response to client
+   
+5) Run the container
 ```
-docker run -d -p 50051:50051 -v 
+docker run -d -p 50051:50051 -v /tmp/yang_paths/:/app/paths/ <image_id>
 ```
