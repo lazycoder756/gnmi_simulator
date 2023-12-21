@@ -1,0 +1,3 @@
+/a/b[name=test]/c="output"
+/d/e/f=1
+/abc/cds[name=test]/hfj="true"
